@@ -87,12 +87,15 @@ export default function HiveDetailPage({ params }: { params: Promise<{ id: strin
 
   useEffect(() => {
     const auth = window.localStorage.getItem("bloom-authenticated");
-    if (auth !== "true") {
+    const email = window.localStorage.getItem("bloom-user-email");
+    if (auth !== "true" || !email) {
       window.location.href = "/login";
       return;
     }
-    const email = window.localStorage.getItem("bloom-user-email") ?? "";
-    const name = window.localStorage.getItem("bloom-user-name") ?? email.split("@")[0];
+    let name = window.localStorage.getItem("bloom-user-name") ?? "";
+    if (!name || name === "null" || name === "undefined") {
+      name = email.split("@")[0] || "User";
+    }
     setProfile({ email, name });
 
     fetchHiveDetails(email);
